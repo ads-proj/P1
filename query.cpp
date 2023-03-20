@@ -4,6 +4,7 @@
 #include "fstream"
 #include "filesystem"
 #include "sstream"
+#include "vector"
 #include "./external/porter2_stemmer.h"
 
 // Define a struct named "unit" to store article names and the times the word appears in each article
@@ -15,7 +16,7 @@ struct unit{
 
 // Define a struct named "search_result" to store the search result of each article
 struct search_result{
-    int match_words=0;
+    std::vector<std::string> match_words;
     int score=0;
 };
 
@@ -68,13 +69,14 @@ string_split(words,' ',tokens); // Split the input words by spaces and store in 
 // Loop through each input word
 for(auto& word:tokens)
 {
+    std::string rawWord=word;
     // Apply Porter2 stemmer algorithm to reduce words to their base form
     Porter2Stemmer::trim(word);
     Porter2Stemmer::stem(word);
     // Loop through each unit (i.e. arc) in the dictionary corresponding to the current word
     for(auto &arc:dict[word])
         // Update the corresponding search result with the number of matches and the total score
-        final[arc.name].score+=arc.times,final[arc.name].match_words++;
+        final[arc.name].score+=arc.times,final[arc.name].match_words.push_back(rawWord);
 }
 
 // Copy the search results into a vector for sorting
@@ -84,9 +86,9 @@ for(auto &p:final)
 // Sort the search results by number of matches and then by score
 std::sort(sort_final.begin(),sort_final.end(),
           [](auto a,auto b){
-    return a.second.match_words==b.second.match_words?
+    return a.second.match_words.size()==b.second.match_words.size()?
             a.second.score>b.second.score:
-            a.second.match_words>b.second.match_words;
+            a.second.match_words.size()>b.second.match_words.size();
 });
 
 // Display the top search results
@@ -94,6 +96,10 @@ int i=0;
 for(auto &res:sort_final)
 {
     std::cout<<res.first<<std::endl;
+    std::cout<<"word included:"<<std::endl;
+    for(auto &word:res.second.match_words)
+        std::cout<<word<<" ";
+    std::cout<<std::endl;
     if(++i==threshold) break;
 }
 return 0;
