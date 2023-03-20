@@ -1,8 +1,9 @@
-//
-// Created by andres on 2023-03-15.
-//
-#include "bits/stdc++.h"
+#include "map"
+#include "string"
+#include "iostream"
+#include "fstream"
 #include "filesystem"
+#include "sstream"
 #include "./external/porter2_stemmer.h"
 
 // Define a struct named "unit" to store article names and the times the word appears in each article
@@ -43,7 +44,7 @@ void load_dict(std::string& dict_base,std::map<std::string,std::vector<unit>>&di
 }
 
 // Function to split a string into multiple tokens based on a given delimiter
-void string_split(std::string str,char split,std::vector<std::string>& tokens)
+void string_split(std::string& str,char split,std::vector<std::string>& tokens)
 {
     std::istringstream iss(str);
     std::string token;
@@ -59,7 +60,7 @@ int main()
 std::string dict_base("../dict"); // Base directory for the dictionary files
 int threshold=10; // Maximum number of search results to display
 std::string words; // Input words to search for
-std::vectorstd::string tokens; // Vector to store the individual words
+std::vector<std::string> tokens; // Vector to store the individual words
 load_dict(dict_base,dict); // Load the dictionary files into a map
 std::cout<<"Enter the word you need to query(split them by space):"<<std::endl;
 std::getline(std::cin,words); // Read in the input words

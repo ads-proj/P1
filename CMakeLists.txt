@@ -15,3 +15,5 @@ add_executable(Query
         ./external/porter2_stemmer.h
         ./external/util/hash.h
         ./external/util/string_view.h)
+add_executable(Stop
+        stop_word.cpp)

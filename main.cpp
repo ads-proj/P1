@@ -1,6 +1,10 @@
 #include "filesystem" // include the header file for the C++17 Filesystem library
+#include "map"
+#include "string"
+#include "iostream"
+#include "fstream"
+
 #include "./external/porter2_stemmer.h" // include the header file for the Porter2 stemmer library
-#include "bits/stdc++.h" // include a standard C++ header file that includes most other standard header files
 using namespace std; // use the standard namespace
 namespace fs=std::filesystem; // create an alias for the Filesystem namespace
 
@@ -19,13 +23,17 @@ void file_parser(ifstream& file,std::map<string,vector<unit>>&dict,string articl
     while(getline(file,temp)){ // read the file line by line
         for(int i=0;temp[i];i++) // iterate over each character in the line
         {
-            if(std::isalnum(temp[i])) // check if the character is alphanumeric
+            if(std::isalnum(temp[i])||temp[i]=='\'') // check if the character is alphanumeric
             {
                 if(inword==0) inword=1; // if not currently parsing a word, set flag to true
                 word.push_back(temp[i]); // add the character to the word string
             }
             else if(inword) // if not alphanumeric and currently parsing a word
             {
+                if(word=="\'") {
+                    word.clear();
+                    continue;
+                }
                 Porter2Stemmer::trim(word); // use Porter2 stemmer to trim the word
                 Porter2Stemmer::stem(word); // use Porter2 stemmer to stem the word
                 if(word.size()==0) continue; // if the word has no length, skip to the next iteration
@@ -53,7 +61,7 @@ void load_dict(string& dict_base,std::map<string,vector<unit>>&dict) // define a
     return; //
 }
 
-
+int totalFile=0;
 int main()
 {
     // Define the base path where the sample files are stored
@@ -86,12 +94,12 @@ int main()
 
             // Create a string representing the article name (directory name + file name)
             string article_name=filename+" "+tv.path().filename().string();
-
+            totalFile++;
             // Parse the file and add its words to the inverted index dictionary
             file_parser(file,dict,article_name);
         }
     }
-
+    cout<<"the number of files is:"<<totalFile<<endl;
     // Load the inverted index dictionary from disk
     load_dict(dict_base.string(),dict);
 
