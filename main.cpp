@@ -48,7 +48,7 @@ void file_parser(ifstream& file,std::map<string,vector<unit>>&dict,string articl
     }
 }
 
-void load_dict(string& dict_base,std::map<string,vector<unit>>&dict) // define a function to load the map into a file
+void load_dict(string dict_base,std::map<string,vector<unit>>&dict) // define a function to load the map into a file
 {
     fstream f(dict_base+"/dict.txt",ios::out); // open the output file stream
     for(auto &p:dict) // iterate over each key-value pair in the map
